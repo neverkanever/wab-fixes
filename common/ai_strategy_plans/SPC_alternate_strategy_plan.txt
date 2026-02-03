@@ -104,6 +104,16 @@ SPC_alternate_plan_2 = {
 					}
 				}
 			}
+			AND = {
+				tag = SPR
+				has_global_flag = SOV_covert_support_for_poum_flag
+				NOT = {
+					has_completed_focus = SPR_regional_defense_council_of_aragon #Not Anarchists
+					has_completed_focus = SPR_maintain_the_second_republic #Not Spanish Republic
+					has_completed_focus = SPR_the_stalinist_doctrine #Not Stalinist Communists
+					has_completed_focus = SPA_a_great_spain #Not wrong Spain
+				}
+			}
 		}
 	}
 	abort = {
