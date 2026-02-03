@@ -744,15 +744,27 @@ country_event = {
 								factor = 0
 								is_historical_focus_on = yes
 							}
+							modifier = {
+								factor = 0
+								has_global_flag = SOV_covert_support_for_poum_flag #POUM UPRISING (SUPPORTED BY SOVIET RIGHT OPPOSITION)
+							}
 							complete_national_focus = SPR_regional_defense_council_of_aragon
 						}
 						10 = {
+							modifier = {
+								factor = 0
+								has_global_flag = SOV_covert_support_for_poum_flag #POUM UPRISING (SUPPORTED BY SOVIET RIGHT OPPOSITION)
+							}
 							complete_national_focus = SPR_maintain_the_second_republic
 						}
 						10 = {
 							modifier = {
 								factor = 0
 								is_historical_focus_on = yes
+							}
+							modifier = {
+								add = 10
+								has_global_flag = SOV_covert_support_for_poum_flag #POUM UPRISING (SUPPORTED BY SOVIET RIGHT OPPOSITION)
 							}
 							complete_national_focus = SPR_the_anti_fascist_workers_revolution
 						}
@@ -1846,6 +1858,10 @@ country_event = {
 					}
 				}
 			}
+			modifier = {
+				factor = 0
+				has_global_flag = SOV_covert_support_for_poum_flag #Soviet Right Opposition is providing support to the POUM
+			}
 		}
 		# Remove Spirits that will no longer be relevant
 		custom_effect_tooltip = republicans_chosen
@@ -1948,6 +1964,10 @@ country_event = {
 						option = SECOND_REPUBLIC
 					}
 				}
+			}
+			modifier = {
+				add = 30
+				has_global_flag = SOV_covert_support_for_poum_flag #Soviet Right Opposition is providing support to the POUM
 			}
 		}
 		# Remove Spirits that will no longer be relevant
@@ -2061,6 +2081,10 @@ country_event = {
 						option = STALINIST
 					}
 				}
+			}
+			modifier = {
+				factor = 0
+				has_global_flag = SOV_covert_support_for_poum_flag #Soviet Right Opposition is providing support to the POUM
 			}
 		}
 		# Remove Spirits that will no longer be relevant
@@ -3443,6 +3467,7 @@ country_event = {
 		hidden_effect = {
 			set_global_flag = SPR_anarchist_uprising_flag
 			set_global_flag = { flag = SPR_civil_war_startup value = 1 days = 3 } # Make AI avoid attacking for a few days
+			
 			if = { #POUM UPRISING (SUPPORTED BY SOVIET RIGHT OPPOSITION)
 				limit = {
 					has_global_flag = SOV_covert_support_for_poum_flag
@@ -3565,6 +3590,7 @@ country_event = {
 					}
 				}			
 			}
+			
 			if = {
 				limit = {
 					has_completed_focus = SPR_crush_the_revolution
@@ -3690,29 +3716,50 @@ country_event = {
 			}
 			SPC = {
 				inherit_technology = SPD
-				add_country_leader_role = {
-					character = SPR_anarchist_commune
-					country_leader = {
-						desc = "POLITICS_ANARCHIST_COMMUNE_DESC"
-						expire = "1965.1.1"
-						ideology = anarchism
-						traits = {
-							our_right_to_survive
-						}
+
+				if = { #POUM Uprising, supported by Soviet Right Opposition
+					limit = {
+						has_global_flag = SOV_covert_support_for_poum_flag
 					}
-					promote_leader = yes
+					set_politics = {
+						ruling_party = communism
+						last_election = "1933.4.26"
+						election_frequency = 48
+						elections_allowed = no
+					}
+					set_popularities = {
+						neutrality = 15
+						communism = 80
+						democratic = 5
+					}
 				}
-				set_politics = {
-					ruling_party = neutrality
-					last_election = "1933.4.26"
-					election_frequency = 48
-					elections_allowed = no
+				
+				else = { #Regular Anarchist Uprising
+					add_country_leader_role = {
+						character = SPR_anarchist_commune
+						country_leader = {
+							desc = "POLITICS_ANARCHIST_COMMUNE_DESC"
+							expire = "1965.1.1"
+							ideology = anarchism
+							traits = {
+								our_right_to_survive
+							}
+						}
+						promote_leader = yes
+					}
+					set_politics = {
+						ruling_party = neutrality
+						last_election = "1933.4.26"
+						election_frequency = 48
+						elections_allowed = no
+					}
+					set_popularities = {
+						neutrality = 80
+						communism = 15
+						democratic = 5
+					}
 				}
-				set_popularities = {
-					neutrality = 80
-					communism = 15
-					democratic = 5
-				}
+				
 				remove_ideas = SPR_the_maximum_concession
 				add_ideas = closed_economy
 				set_stability = 0.6
@@ -3921,10 +3968,21 @@ country_event = {
 				unlock_national_focus = SPR_enlarge_the_weapon_caches
 				unlock_national_focus = SPR_distribute_arms_to_the_people
 				unlock_national_focus = SPR_disband_the_army
-				complete_national_focus = SPR_regional_defense_council_of_aragon
-				complete_national_focus = SPR_arm_the_people
-				complete_national_focus = SPR_appropriate_the_means_of_production
-				unlock_national_focus = SPR_the_maximum_concession
+				if = { #POUM Uprising Supported by Soviet Right Opposition
+					limit = {
+						has_global_flag = SOV_covert_support_for_poum_flag
+					}
+					complete_national_focus = SPR_the_anti_fascist_workers_revolution
+					complete_national_focus = SPR_arm_the_workers_militias
+					complete_national_focus = SPR_demand_ministerial_positions
+					unlock_national_focus = SPR_hinder_nkvd_interference
+				}
+				else = { #Regular Anarchist Uprising
+					complete_national_focus = SPR_regional_defense_council_of_aragon
+					complete_national_focus = SPR_arm_the_people
+					complete_national_focus = SPR_appropriate_the_means_of_production
+					unlock_national_focus = SPR_the_maximum_concession
+				}
 				unlock_national_focus = SPR_seize_the_gold_reserves
 				unlock_national_focus = SPR_masters_of_our_own_fate
 				add_timed_idea = { idea = SPR_death_before_surrender days = 900 }
@@ -3990,19 +4048,38 @@ country_event = {
 	option = {
 		name = lar_spain.9.a
 		effect_tooltip = {
-			if = {
+			if = { #POUM Uprising Supported by Soviet Right Opposition
 				limit = {
-					neutrality > 0.03
+					has_global_flag = SOV_covert_support_for_poum_flag
 				}
-				set_political_party = {
-				    ideology = neutrality
-				    popularity = 3
+				if = {
+					limit = {
+						communism > 0.03
+					}
+					set_political_party = {
+						ideology = communism
+						popularity = 3
+					}
+				}
+				add_popularity = {
+					ideology = neutrality
+					popularity = -0.05
 				}
 			}
-			add_popularity = {
-			    ideology = communism
-			    popularity = -0.05
-			}
+			else = { #Regular Anarchist Uprising	
+				if = {
+					limit = {
+						neutrality > 0.03
+					}
+					set_political_party = {
+					    ideology = neutrality
+					    popularity = 3
+					}
+				}
+				add_popularity = {
+				    ideology = communism
+				    popularity = -0.05
+				}
 			add_stability = -0.1
 			transfer_units_fraction = {
 				target = SPC
@@ -4089,16 +4166,40 @@ country_event = {
 
 	immediate = {
 		hidden_effect = {
-			every_other_country = {
+			if = { #If POUM split and Right Opposition is in charge and they supporting POUM then their volunteers stay in SPC
 				limit = {
-					ROOT = {
-						has_volunteers_amount_from = {
-						    tag = PREV
-						    count > 0
-						}
+					has_completed_focus = SPR_the_anti_fascist_workers_revolution
+					SOV = {
+						has_completed_focus = SOV_covert_support_for_spanish_poum
+						has_completed_focus = SOV_coup_detat
 					}
 				}
-				recall_volunteers_from = ROOT
+			
+				every_other_country = {
+					limit = {
+						NOT = { tag = SOV }
+						ROOT = {
+							has_volunteers_amount_from = {
+						    	tag = PREV
+						    	count > 0
+							}
+						}
+					}
+					recall_volunteers_from = ROOT
+				}
+			}
+			else = {
+				every_other_country = { #Default
+					limit = {
+						ROOT = {
+							has_volunteers_amount_from = {
+						   		tag = PREV
+								count > 0
+							}
+						}
+					}
+					recall_volunteers_from = ROOT
+				}
 			}
 			set_global_flag = SPR_anarchist_uprising_flag
 			set_global_flag = { flag = SPR_civil_war_startup value = 1 days = 3 } # Make AI avoid attacking for a few days
@@ -4228,6 +4329,42 @@ country_event = {
 				    logistics_skill = 1
 				}
 				set_rule = { can_generate_female_aces = yes	}
+
+				#Check for covert depots from Soviets
+				if = {
+					limit = {
+						has_global_flag = SOV_poum_has_covert_depots_from_soviets_flag
+					}
+					add_equipment_to_stockpile = {
+						type = infantry_equipment
+						amount = 6000
+						producer = SOV
+					}
+					add_equipment_to_stockpile = {
+						type = support_equipment
+						amount = 600
+						producer = SOV
+					}
+					add_equipment_to_stockpile = {
+						type = artillery_equipment
+						amount = 120
+						producer = SOV
+					}
+					add_equipment_to_stockpile = {
+						type = motorized_equipment
+						amount = 60
+						producer = SOV
+					}
+					add_equipment_to_stockpile = {
+						type = train_equipment
+						amount = 6
+						producer = SOV
+					}
+					add_opinion_modifier = {
+						target = SOV
+						modifier = SOV_sent_us_weapons
+					}
+				}
 			}
 			remove_ideas = SPR_the_maximum_concession
 			add_ideas = closed_economy
